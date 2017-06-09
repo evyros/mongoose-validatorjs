@@ -4,9 +4,10 @@
   "description": "Validators for Mongoose using validator.js",
   "main": "index.js",
   "scripts": {
-	  "watch": "nodemon src/mongoose-validatorjs.js -L --exec babel-node",
-	  "build": "babel src --out-dir dist",
-	  "lint": "eslint . ; exit 0"
+    "watch": "nodemon src/mongoose-validatorjs.js -L --exec babel-node",
+    "build": "babel src --out-dir dist",
+    "test": "mocha --compilers js:babel-core/register",
+    "lint": "eslint . ; exit 0"
   },
   "repository": {
     "type": "git",
@@ -31,8 +32,10 @@
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
-	  "babel-preset-env": "^1.5.1",
-	  "eslint": "^3.19.0",
-	  "nodemon": "^1.11.0"
+    "babel-preset-env": "^1.5.1",
+    "chai": "^4.0.2",
+    "eslint": "^3.19.0",
+    "mocha": "^3.4.2",
+    "nodemon": "^1.11.0"
   }
 }
