@@ -81,7 +81,7 @@ module.exports = {
         "id-length": "error",
         "id-match": "error",
         "indent": "off",
-        "init-declarations": "error",
+        "init-declarations": "off",
         "jsx-quotes": "error",
         "key-spacing": "error",
         "keyword-spacing": "off",
@@ -239,7 +239,7 @@ module.exports = {
         "semi-spacing": "error",
         "sort-imports": "off",
         "sort-keys": "off",
-        "sort-vars": "error",
+        "sort-vars": "off",
         "space-before-blocks": "off",
         "space-before-function-paren": "off",
         "space-in-parens": [
