@@ -27,7 +27,7 @@ class ValidatorFactory {
 
 }
 
-export class MongooseValidatorjs {
+module.exports = class MongooseValidatorjs {
 
 	constructor(schema) {
 		this._schema = schema;
@@ -44,4 +44,4 @@ export class MongooseValidatorjs {
 		);
 	}
 
-}
+};

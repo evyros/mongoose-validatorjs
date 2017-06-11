@@ -1,10 +1,5 @@
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-exports.MongooseValidatorjs = undefined;
-
 var _fieldValidator = require('./field-validator');
 
 class ValidatorFactory {
@@ -32,7 +27,7 @@ class ValidatorFactory {
 
 }
 
-class MongooseValidatorjs {
+module.exports = class MongooseValidatorjs {
 
 	constructor(schema) {
 		this._schema = schema;
@@ -46,5 +41,4 @@ class MongooseValidatorjs {
 		return new ValidatorFactory(this.getSchema(), fieldName);
 	}
 
-}
-exports.MongooseValidatorjs = MongooseValidatorjs;
+};

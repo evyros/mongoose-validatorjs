@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import mongoose from 'mongoose';
 mongoose.Promise = Promise;
 
-import { MongooseValidatorjs } from '../src/mongoose-validatorjs';
+import MongooseValidatorjs from '../src/mongoose-validatorjs';
 import defaultErrors from '../src/default-errors';
 
 describe('Mongoose Validator:', () => {
