@@ -8,6 +8,7 @@
     "build": "babel src --out-dir dist",
     "test": "nyc mocha --compilers js:babel-core/register",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
+		"coverage-check": "nyc report npm test",
     "lint": "eslint . ; exit 0"
   },
   "repository": {
