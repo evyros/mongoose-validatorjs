@@ -1,6 +1,6 @@
 {
   "name": "mongoose-validatorjs",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Validators for Mongoose using validator.js",
   "main": "dist/mongoose-validatorjs",
   "scripts": {

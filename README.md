@@ -34,6 +34,7 @@ You can chain as many validators as you need. That simple!
 
 ## Required fields
 validator.js will always pass a validation if the field is `null`, `undefined` or empty string.
+
 Use ```required()``` to prevent this behavior.
 
 
