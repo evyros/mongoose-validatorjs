@@ -89,7 +89,7 @@ For your convenience, here is the official docs, modified according to the use o
 - **isUppercase()** - check if the string is uppercase.
 - **isVariableWidth()** - check if the string contains a mixture of full and half-width chars.
 - **isWhitelisted(chars)** - checks characters if they appear in the whitelist.
-- **matches(pattern)** - check if string matches the pattern. Either `matches('foo', /foo/i)` or `matches('foo', 'foo', 'i')`.
+- **matches(pattern)** - check if string matches the pattern. `matches(/foo/i)` .
 
 
 
