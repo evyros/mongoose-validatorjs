@@ -4,5 +4,6 @@ node_js:
 before_script:
   - npm install
 script: npm test
+after_success: npm run coverage
 services:
   - mongodb
