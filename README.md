@@ -33,14 +33,17 @@ You can chain as many validators as you need. That simple!
 
 
 ## Required fields
-validator.js will always pass a validation if the field is null, undefined or empty string.
+validator.js will always pass a validation if the field is `null`, `undefined` or empty string.
+
 Use ```required()``` to prevent this behavior.
 
 
 
 ## Validators
 
-This module utilises [validator.js](https://github.com/chriso/validator.js), for your convenience, here is the official docs according to the usage with this package.
+This module utilises [validator.js](https://github.com/chriso/validator.js), the API is pretty much the same.
+
+For your convenience, here is the official docs, modified according to the use of this package:
 
 - **contains(seed)** - check if the string contains the seed.
 - **equals(comparison)** - check if the string matches the comparison.
