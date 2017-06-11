@@ -277,15 +277,76 @@ describe('Mongoose Validator:', () => {
 				expect(error.errors.role.message).to.equal(customErrorMessage);
 			});
 
-			it('isIn (message interpolation)', () => {
-				const customErrorMessage = 'the provided role does not exist in {ARGS[0]}, {ARGS[1]}';
-				let validate = new MongooseValidatorjs(schema);
-				validate.field('role').isIn(['admin', 'guest'], { message: customErrorMessage });
-				let model = new User({ role: 'invalidRole' });
-				let error = model.validateSync();
-				expect(error).to.not.be.undefined;
-				expect(error.errors).to.have.property('role');
-				expect(error.errors.role.message).to.equal('the provided role does not exist in admin, guest');
+			describe('custom message - message interpolation', () => {
+
+				it('isIn (with an array argument)', () => {
+					const customErrorMessage = 'the provided role does not exist in {ARGS[0]}, {ARGS[1]}';
+					let validate = new MongooseValidatorjs(schema);
+					validate.field('role').isIn(['admin', 'guest'], { message: customErrorMessage });
+					let model = new User({ role: 'invalidRole' });
+					let error = model.validateSync();
+					expect(error).to.not.be.undefined;
+					expect(error.errors).to.have.property('role');
+					expect(error.errors.role.message).to.equal('the provided role does not exist in admin, guest');
+				});
+
+				it('isWhitelisted (with a string argument)', () => {
+					const customErrorMessage = 'the provided role does not exist in {ARGS[0]}';
+					let validate = new MongooseValidatorjs(schema);
+					validate.field('role').isWhitelisted('abcdefg', { message: customErrorMessage });
+					let model = new User({ role: 'hijklmn' });
+					let error = model.validateSync();
+					expect(error).to.not.be.undefined;
+					expect(error.errors).to.have.property('role');
+					expect(error.errors.role.message).to.equal('the provided role does not exist in abcdefg');
+				});
+
+				it('isWhitelisted (with a false argument)', () => {
+					const customErrorMessage = 'the provided role does not exist in {ARGS[0]}';
+					let validate = new MongooseValidatorjs(schema);
+					validate.field('role').isWhitelisted(false, { message: customErrorMessage });
+					let model = new User({ role: 'myRole' });
+					let error = model.validateSync();
+					expect(error).to.not.be.undefined;
+					expect(error.errors).to.have.property('role');
+					expect(error.errors.role.message).to.equal('the provided role does not exist in ');
+				});
+
+				it('isWhitelisted (with an undefined argument)', () => {
+					const customErrorMessage = 'the provided role does not exist in {ARGS[0]}';
+					let validate = new MongooseValidatorjs(schema);
+					let undefinedVariable;
+					validate.field('role').isWhitelisted(undefinedVariable, { message: customErrorMessage });
+					let model = new User({ role: 'myRole' });
+					let error = model.validateSync();
+					expect(error).to.not.be.undefined;
+					expect(error.errors).to.have.property('role');
+					expect(error.errors.role.message).to.equal('the provided role does not exist in ');
+				});
+
+				it('isWhitelisted (with a null argument)', () => {
+					const customErrorMessage = 'the provided role does not exist in {ARGS[0]}';
+					let validate = new MongooseValidatorjs(schema);
+					validate.field('role').isWhitelisted(null, { message: customErrorMessage });
+					let model = new User({ role: 'myRole' });
+					let error = model.validateSync();
+					expect(error).to.not.be.undefined;
+					expect(error.errors).to.have.property('role');
+					expect(error.errors.role.message).to.equal('the provided role does not exist in ');
+				});
+
+				it('isIn (with an object with an undefined argument)', () => {
+					const customErrorMessage = 'Must be between {ARGS[0]} and {ARGS[1]} characters';
+					let validate = new MongooseValidatorjs(schema);
+					let undefinedVariable;
+					validate.field('role').isLength({ min: 10, max: undefinedVariable }, { message: customErrorMessage });
+					let model = new User({ role: 'short' });
+					let error = model.validateSync();
+					expect(error).to.not.be.undefined;
+					expect(error.errors).to.have.property('role');
+					expect(error.errors.role.message).to.equal('Must be between 10 and  characters');
+				});
+
 			});
 
 		});

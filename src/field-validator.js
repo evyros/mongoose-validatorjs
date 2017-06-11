@@ -62,10 +62,15 @@ export class FieldValidator {
 }
 
 function interpolateMessage(message, args) {
-	if(! args) {
-		return message;
+	if(args === null || typeof args === 'undefined') {
+		args = '';
 	}
-	args = Array.isArray(args) ? args : Object.values(args);
+	if(typeof args === 'string') {
+		args = [args];
+	}
+	else if(typeof args === 'object') {
+		args = Object.values(args);
+	}
 	return message.replace(/{ARGS\[(\d+)\]}/g, (replace, argIndex) => {
 		let val = args[argIndex];
 		return typeof val !== 'undefined' ? val : '';
