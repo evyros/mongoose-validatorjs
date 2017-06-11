@@ -30,9 +30,12 @@ validate.field('username').isAlphanumeric();
 ```
 You can chain as many validators as you need. That simple!
 
+
+
 ## Required fields
 validator.js will always pass a validation if the field is null, undefined or empty string.
 Use ```required()``` to prevent this behavior.
+
 
 
 ## Validators
@@ -86,6 +89,8 @@ This module utilises [validator.js](https://github.com/chriso/validator.js), for
 - **isWhitelisted(chars)** - checks characters if they appear in the whitelist.
 - **matches(pattern)** - check if string matches the pattern. Either `matches('foo', /foo/i)` or `matches('foo', 'foo', 'i')`.
 
+
+
 ## Custom error messages
 Set a custom error message to be used when the validator fails.
 If you don't set it, mongoose-validatorjs will use its corresponding default.
@@ -100,6 +105,8 @@ validate.field('username')
 	.contains('user_', {message: 'The prefix {ARGS[0]} is missing'});
 ```
 Note: You can use `{ARGS[0]}` even if your arguments isn't an array.
+
+
 
 ## NPM scripts
 - **`npm test`** - run unit tests
