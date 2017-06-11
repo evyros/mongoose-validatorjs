@@ -5,7 +5,7 @@ mongoose.Promise = Promise;
 import { MongooseValidatorjs } from '../src/mongoose-validatorjs';
 
 describe('Mongoose Validator:', () => {
-	let User, doc, schema;
+	let User, schema;
 
 	before(done => {
 		const url = 'mongodb://127.0.0.1/mongoose_validatorjs_test';
@@ -57,7 +57,7 @@ describe('Mongoose Validator:', () => {
 
 	describe('field', () => {
 
-		it('field()', () => {
+		it('field', () => {
 			let validate = new MongooseValidatorjs(schema);
 			expect(validate.field('email')).to.be.an('object');
 		});
@@ -120,5 +120,79 @@ describe('Mongoose Validator:', () => {
 
 	});
 
+	describe('validator.js', () => {
+
+		let validate;
+
+		beforeEach(() => {
+			validate = new MongooseValidatorjs(schema);
+		});
+
+		describe('isLength', () => {
+
+			it('should raise no errors', () => {
+				validate.field('email').isLength({ min: 15, max: 60 });
+				let model = new User({ email: 'long.enough@email.com' });
+				let error = model.validateSync();
+				expect(error).to.be.undefined;
+			});
+
+			it('should raise an error', () => {
+				validate.field('email').isLength({ min: 15, max: 60 });
+				let model = new User({ email: 'short@ema.il' });
+				let error = model.validateSync();
+				expect(error).to.not.be.undefined;
+				expect(error.errors).to.have.property('email');
+			});
+
+		});
+
+		describe('isEmail', () => {
+
+			beforeEach(() => {
+				validate.field('email').isEmail();
+			});
+
+			describe('should raise no errors when', () => {
+
+				it('email is valid', () => {
+					let model = new User({ email: 'valid@email.com' });
+					let error = model.validateSync();
+					expect(error).to.be.undefined;
+				});
+
+				it('email is empty', () => {
+					let model = new User({ email: '' });
+					let error = model.validateSync();
+					expect(error).to.be.undefined;
+				});
+			});
+
+			describe('should raise an error when', () => {
+
+				it('email is invalid', () => {
+					let model = new User({ email: 'invalid email@gmail.com' });
+					let error = model.validateSync();
+					expect(error).to.not.be.undefined;
+					expect(error.errors).to.have.property('email');
+				});
+
+				it('email is empty and required', () => {
+					validate.field('email').required();
+					let model = new User({ email: '' });
+					let error = model.validateSync();
+					expect(error).to.not.be.undefined;
+					expect(error.errors).to.have.property('email');
+				});
+
+			});
+
+		});
+
+	});
+
+	describe('error messages', () => {
+
+	});
 
 });
