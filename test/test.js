@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 mongoose.Promise = Promise;
 
 import { MongooseValidatorjs } from '../src/mongoose-validatorjs';
+import defaultErrors from '../src/default-errors';
 
 describe('Mongoose Validator:', () => {
 	let User, schema;
@@ -12,13 +13,13 @@ describe('Mongoose Validator:', () => {
 		const date = Date.now();
 
 		const email = { type: String, default: null };
-		const roles = { type: Array, default: [] };
+		const role = { type: String, default: null };
 		const age = { type: Number, default: null };
 		const date_created = { type: Date, default: date };
 
 		mongoose.connect(url);
 
-		schema = new mongoose.Schema({ email, roles, age, date_created });
+		schema = new mongoose.Schema({ email, role, age, date_created });
 		User = mongoose.model('User', schema);
 		done();
 	});
@@ -34,7 +35,7 @@ describe('Mongoose Validator:', () => {
 	afterEach(done => {
 		// Remove the attached validators from tests
 		schema.paths.email.validators = [];
-		schema.paths.roles.validators = [];
+		schema.paths.role.validators = [];
 		schema.paths.age.validators = [];
 		schema.paths.date_created.validators = [];
 		done();
@@ -203,7 +204,92 @@ describe('Mongoose Validator:', () => {
 	});
 
 	describe('error messages', () => {
-		// TBD
+
+		describe('default message', () => {
+
+			it('required', () => {
+				let validate = new MongooseValidatorjs(schema);
+				validate.field('email').required();
+				let model = new User();
+				let error = model.validateSync();
+				expect(error).to.not.be.undefined;
+				expect(error.errors).to.have.property('email');
+				expect(error.errors.email.message).to.equal('email is required');
+			});
+
+			it('isEmail', () => {
+				let validate = new MongooseValidatorjs(schema);
+				validate.field('email').isEmail();
+				let model = new User({ email: 'invalid.email$gmail.com' });
+				let error = model.validateSync();
+				expect(error).to.not.be.undefined;
+				expect(error.errors).to.have.property('email');
+				expect(error.errors.email.message).to.equal(defaultErrors.isEmail);
+			});
+
+			it('isLength (message interpolation)', () => {
+				let validate = new MongooseValidatorjs(schema);
+				validate.field('email').isLength({ min: 10, max: 60 });
+				let model = new User({ email: 'too@short' });
+				let error = model.validateSync();
+				expect(error).to.not.be.undefined;
+				expect(error.errors).to.have.property('email');
+				expect(error.errors.email.message).to.equal('Must be between 10 and 60 characters');
+			});
+
+		});
+
+		describe('custom message', () => {
+
+			// built-in validator
+			it('required', () => {
+				const customErrorMessage = 'Cannot be blank';
+				let validate = new MongooseValidatorjs(schema);
+				validate.field('email').required({ message: customErrorMessage });
+				let model = new User();
+				let error = model.validateSync();
+				expect(error).to.not.be.undefined;
+				expect(error.errors).to.have.property('email');
+				expect(error.errors.email.message).to.equal(customErrorMessage);
+			});
+
+			// validator without arguments
+			it('isEmail', () => {
+				const customErrorMessage = 'The email you entered is not valid';
+				let validate = new MongooseValidatorjs(schema);
+				validate.field('email').isEmail({ message: customErrorMessage });
+				let model = new User({ email: 'invalid.email$gmail.com' });
+				let error = model.validateSync();
+				expect(error).to.not.be.undefined;
+				expect(error.errors).to.have.property('email');
+				expect(error.errors.email.message).to.equal(customErrorMessage);
+			});
+
+			// validator with 1 argument
+			it('isIn', () => {
+				const customErrorMessage = 'the role does not exist';
+				let validate = new MongooseValidatorjs(schema);
+				validate.field('role').isIn(['admin', 'guest'], { message: customErrorMessage });
+				let model = new User({ role: 'invalidRole' });
+				let error = model.validateSync();
+				expect(error).to.not.be.undefined;
+				expect(error.errors).to.have.property('role');
+				expect(error.errors.role.message).to.equal(customErrorMessage);
+			});
+
+			it('isIn (message interpolation)', () => {
+				const customErrorMessage = 'the provided role does not exist in {ARGS[0]}, {ARGS[1]}';
+				let validate = new MongooseValidatorjs(schema);
+				validate.field('role').isIn(['admin', 'guest'], { message: customErrorMessage });
+				let model = new User({ role: 'invalidRole' });
+				let error = model.validateSync();
+				expect(error).to.not.be.undefined;
+				expect(error.errors).to.have.property('role');
+				expect(error.errors.role.message).to.equal('the provided role does not exist in admin, guest');
+			});
+
+		});
+
 	});
 
 });
