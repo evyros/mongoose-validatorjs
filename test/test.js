@@ -88,7 +88,7 @@ describe('Mongoose Validator:', () => {
 			});
 
 			it('undefined', () => {
-				let model = new User;
+				let model = new User();
 				let error = model.validateSync();
 				expect(error).to.not.be.undefined;
 				expect(error.errors).to.have.property('email');
@@ -192,7 +192,7 @@ describe('Mongoose Validator:', () => {
 		describe('invalid validator', () => {
 
 			it('should call to a validator does not exists', () => {
-				let fn = function() {
+				let fn = () => {
 					validate.field('email').invalidValidator();
 				};
 				expect(fn).to.throw();
@@ -203,7 +203,7 @@ describe('Mongoose Validator:', () => {
 	});
 
 	describe('error messages', () => {
-
+		// TBD
 	});
 
 });
