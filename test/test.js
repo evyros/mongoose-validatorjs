@@ -189,6 +189,17 @@ describe('Mongoose Validator:', () => {
 
 		});
 
+		describe('invalid validator', () => {
+
+			it('should call to a validator does not exists', () => {
+				let fn = function() {
+					validate.field('email').invalidValidator();
+				};
+				expect(fn).to.throw();
+			});
+
+		});
+
 	});
 
 	describe('error messages', () => {
