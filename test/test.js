@@ -203,6 +203,27 @@ describe('Mongoose Validator:', () => {
 
 	});
 
+	describe('custom validator', () => {
+
+		it('should fail validation', () => {
+			let validate = new MongooseValidatorjs(schema);
+			validate.field('email').custom(value => value.length > 0);
+			let model = new User({ email: '' });
+			let error = model.validateSync();
+			expect(error).to.not.be.undefined;
+			expect(error.errors).to.have.property('email');
+		});
+
+		it('should pass validation', () => {
+			let validate = new MongooseValidatorjs(schema);
+			validate.field('email').custom(value => value.length === 0);
+			let model = new User({ email: '' });
+			let error = model.validateSync();
+			expect(error).to.be.undefined;
+		});
+
+	});
+
 	describe('error messages', () => {
 
 		describe('default message', () => {
@@ -215,6 +236,16 @@ describe('Mongoose Validator:', () => {
 				expect(error).to.not.be.undefined;
 				expect(error.errors).to.have.property('email');
 				expect(error.errors.email.message).to.equal('email is required');
+			});
+
+			it('custom', () => {
+				let validate = new MongooseValidatorjs(schema);
+				validate.field('email').custom(value => value.length > 0);
+				let model = new User();
+				let error = model.validateSync();
+				expect(error).to.not.be.undefined;
+				expect(error.errors).to.have.property('email');
+				expect(error.errors.email.message).to.equal('email is invalid');
 			});
 
 			it('isEmail', () => {
@@ -246,6 +277,20 @@ describe('Mongoose Validator:', () => {
 				const customErrorMessage = 'Cannot be blank';
 				let validate = new MongooseValidatorjs(schema);
 				validate.field('email').required({ message: customErrorMessage });
+				let model = new User();
+				let error = model.validateSync();
+				expect(error).to.not.be.undefined;
+				expect(error.errors).to.have.property('email');
+				expect(error.errors.email.message).to.equal(customErrorMessage);
+			});
+
+			it('custom', () => {
+				const customErrorMessage = 'email should have at lease one character';
+				let validate = new MongooseValidatorjs(schema);
+				validate.field('email').custom(
+					value => value.length > 0,
+					{ message: customErrorMessage }
+				);
 				let model = new User();
 				let error = model.validateSync();
 				expect(error).to.not.be.undefined;
