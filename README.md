@@ -41,7 +41,7 @@ Use ```required()``` to prevent this behavior.
 
 ## Validators
 
-This module utilises [validator.js](https://github.com/chriso/validator.js), the API is pretty much the same.
+This module utilises [validator.js](https://github.com/chriso/validator.js) so the API is pretty much the same.
 For your convenience, here is the official docs, modified according to the use of this package:
 
 - **contains(seed)** - check if the string contains the seed.
@@ -92,6 +92,17 @@ For your convenience, here is the official docs, modified according to the use o
 - **matches(pattern)** - check if string matches the pattern. `matches(/foo/i)` .
 
 
+## Custom validator
+You can also add a custom validator of your own.
+Just chain `custom()`, see example:
+```javascript
+validate.field('hobbies').custom((value) => {
+  return value.length > 3;
+});
+```
+Note: you can pass a second argument to `custom()` to make a custom error message.
+See examples below.
+
 
 ## Custom error messages
 Set a custom error message to be used when the validator fails.
@@ -106,7 +117,7 @@ validate.field('email')
 validate.field('username')
 	.contains('user_', {message: 'The prefix {ARGS[0]} is missing'});
 ```
-Note: You can use `{ARGS[0]}` even if your arguments isn't an array.
+Note: You can use `{ARGS[0]}` even if your arguments is an object or string.
 
 
 
