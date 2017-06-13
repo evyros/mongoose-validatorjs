@@ -1,7 +1,7 @@
 import validatorJS from 'validator';
 import defaultErrorMessages from './default-errors';
 
-export class FieldValidator {
+export default class FieldValidator {
 
 	constructor(schema, field) {
 		this._schema = schema;

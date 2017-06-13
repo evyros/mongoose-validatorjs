@@ -1,33 +1,16 @@
 'use strict';
 
-var _fieldValidator = require('./field-validator');
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
-class ValidatorFactory {
+var _validatorFactory = require('./validator-factory');
 
-	constructor(schema, field) {
-		const instance = new _fieldValidator.FieldValidator(schema, field);
-		return new Proxy(this, {
-			get: function (className, validator) {
-				return (arg1, arg2) => {
-					let options, message;
-					if (arg1 && arg1.message) {
-						message = arg1.message;
-					} else if (arg2 && arg2.message) {
-						options = arg1;
-						message = arg2.message;
-					} else {
-						options = arg1;
-					}
-					instance.addValidator(validator, options, message);
-					return new ValidatorFactory(schema, field);
-				};
-			}
-		});
-	}
+var _validatorFactory2 = _interopRequireDefault(_validatorFactory);
 
-}
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-module.exports = class MongooseValidatorjs {
+class MongooseValidatorjs {
 
 	constructor(schema) {
 		this._schema = schema;
@@ -38,7 +21,9 @@ module.exports = class MongooseValidatorjs {
 	}
 
 	field(fieldName) {
-		return new ValidatorFactory(this.getSchema(), fieldName);
+		return new _validatorFactory2.default(this.getSchema(), fieldName);
 	}
 
-};
+}
+
+exports.default = MongooseValidatorjs;

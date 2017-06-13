@@ -3,7 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.FieldValidator = undefined;
 
 var _validator = require('validator');
 
@@ -34,12 +33,12 @@ class FieldValidator {
 		return this.getSchema().path(this.getField());
 	}
 
-	addValidator(name, args, message) {
+	addValidator(name, arg, message) {
 		if (name in this) {
-			return this[name](message);
+			return this[name](arg, message);
 		}
 		if (name in _validator2.default) {
-			return this.useValidatorJS(name, args, message);
+			return this.useValidatorJS(name, arg, message);
 		}
 		throw new Error('Validator `' + name + '` does not exist');
 	}
@@ -56,12 +55,19 @@ class FieldValidator {
 		}, args);
 	}
 
-	required(message) {
+	required(args, message) {
 		this.buildValidator({
 			validator: function (value) {
 				return !isEmpty(value);
 			},
 			message: message || this.getField() + ' is required'
+		});
+	}
+
+	custom(fn, message) {
+		this.buildValidator({
+			validator: fn,
+			message: message || this.getField() + ' is invalid'
 		});
 	}
 
@@ -75,7 +81,7 @@ class FieldValidator {
 
 }
 
-exports.FieldValidator = FieldValidator;
+exports.default = FieldValidator;
 function interpolateMessage(message, args) {
 	if (args === null || typeof args === 'undefined') {
 		args = '';
