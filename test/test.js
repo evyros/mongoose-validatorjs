@@ -244,14 +244,14 @@ describe('Mongoose Validator:', () => {
 				validateErrorMessage(new User(), 'email', 'email is invalid');
 			});
 
-			it('isEmail', () => {
+			it('validator.js', () => {
 				let validate = new MongooseValidatorjs(schema);
 				validate.field('email').isEmail();
 				let model = new User({ email: 'invalid.email$gmail.com' });
 				validateErrorMessage(model, 'email', defaultErrors.isEmail);
 			});
 
-			it('isLength (message interpolation)', () => {
+			it('validator.js + message interpolation', () => {
 				let validate = new MongooseValidatorjs(schema);
 				validate.field('email').isLength({ min: 10, max: 60 });
 				let model = new User({ email: 'too@short' });
