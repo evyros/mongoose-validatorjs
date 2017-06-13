@@ -101,20 +101,17 @@ describe('Mongoose Validator:', () => {
 
 			it('a string', () => {
 				let model = new User({ email: 'email@gmail.com' });
-				let error = model.validateSync();
-				expect(error).to.be.undefined;
+				expect(model.validateSync()).to.be.undefined;
 			});
 
 			it('a number', () => {
 				let model = new User({ email: 65 });
-				let error = model.validateSync();
-				expect(error).to.be.undefined;
+				expect(model.validateSync()).to.be.undefined;
 			});
 
 			it('a wrong type', () => {
 				let model = new User({ email: new Date() });
-				let error = model.validateSync();
-				expect(error).to.be.undefined;
+				expect(model.validateSync()).to.be.undefined;
 			});
 
 		});
@@ -226,46 +223,39 @@ describe('Mongoose Validator:', () => {
 
 	describe('error messages', () => {
 
+		function validateErrorMessage(model, field, messageAfter) {
+			let error = model.validateSync();
+			expect(error).to.not.be.undefined;
+			expect(error.errors).to.have.property(field);
+			expect(error.errors[field].message).to.equal(messageAfter);
+		}
+
 		describe('default message', () => {
 
 			it('required', () => {
 				let validate = new MongooseValidatorjs(schema);
 				validate.field('email').required();
-				let model = new User();
-				let error = model.validateSync();
-				expect(error).to.not.be.undefined;
-				expect(error.errors).to.have.property('email');
-				expect(error.errors.email.message).to.equal('email is required');
+				validateErrorMessage(new User(), 'email', 'email is required');
 			});
 
 			it('custom', () => {
 				let validate = new MongooseValidatorjs(schema);
 				validate.field('email').custom(value => value.length > 0);
-				let model = new User();
-				let error = model.validateSync();
-				expect(error).to.not.be.undefined;
-				expect(error.errors).to.have.property('email');
-				expect(error.errors.email.message).to.equal('email is invalid');
+				validateErrorMessage(new User(), 'email', 'email is invalid');
 			});
 
 			it('isEmail', () => {
 				let validate = new MongooseValidatorjs(schema);
 				validate.field('email').isEmail();
 				let model = new User({ email: 'invalid.email$gmail.com' });
-				let error = model.validateSync();
-				expect(error).to.not.be.undefined;
-				expect(error.errors).to.have.property('email');
-				expect(error.errors.email.message).to.equal(defaultErrors.isEmail);
+				validateErrorMessage(model, 'email', defaultErrors.isEmail);
 			});
 
 			it('isLength (message interpolation)', () => {
 				let validate = new MongooseValidatorjs(schema);
 				validate.field('email').isLength({ min: 10, max: 60 });
 				let model = new User({ email: 'too@short' });
-				let error = model.validateSync();
-				expect(error).to.not.be.undefined;
-				expect(error.errors).to.have.property('email');
-				expect(error.errors.email.message).to.equal('Must be between 10 and 60 characters');
+				validateErrorMessage(model, 'email', 'Must be between 10 and 60 characters');
 			});
 
 		});
@@ -277,11 +267,7 @@ describe('Mongoose Validator:', () => {
 				const customErrorMessage = 'Cannot be blank';
 				let validate = new MongooseValidatorjs(schema);
 				validate.field('email').required({ message: customErrorMessage });
-				let model = new User();
-				let error = model.validateSync();
-				expect(error).to.not.be.undefined;
-				expect(error.errors).to.have.property('email');
-				expect(error.errors.email.message).to.equal(customErrorMessage);
+				validateErrorMessage(new User(), 'email', customErrorMessage);
 			});
 
 			it('custom', () => {
@@ -291,105 +277,75 @@ describe('Mongoose Validator:', () => {
 					value => value.length > 0,
 					{ message: customErrorMessage }
 				);
-				let model = new User();
-				let error = model.validateSync();
-				expect(error).to.not.be.undefined;
-				expect(error.errors).to.have.property('email');
-				expect(error.errors.email.message).to.equal(customErrorMessage);
+				validateErrorMessage(new User(), 'email', customErrorMessage);
 			});
 
-			// validator without arguments
-			it('isEmail', () => {
+			it('validator.js without argument', () => {
 				const customErrorMessage = 'The email you entered is not valid';
 				let validate = new MongooseValidatorjs(schema);
 				validate.field('email').isEmail({ message: customErrorMessage });
 				let model = new User({ email: 'invalid.email$gmail.com' });
-				let error = model.validateSync();
-				expect(error).to.not.be.undefined;
-				expect(error.errors).to.have.property('email');
-				expect(error.errors.email.message).to.equal(customErrorMessage);
+				validateErrorMessage(model, 'email', customErrorMessage);
 			});
 
-			// validator with 1 argument
-			it('isIn', () => {
+			it('validator.js with 1 argument', () => {
 				const customErrorMessage = 'the role does not exist';
 				let validate = new MongooseValidatorjs(schema);
 				validate.field('role').isIn(['admin', 'guest'], { message: customErrorMessage });
 				let model = new User({ role: 'invalidRole' });
-				let error = model.validateSync();
-				expect(error).to.not.be.undefined;
-				expect(error.errors).to.have.property('role');
-				expect(error.errors.role.message).to.equal(customErrorMessage);
+				validateErrorMessage(model, 'role', customErrorMessage);
 			});
 
 			describe('custom message - message interpolation', () => {
 
-				it('isIn (with an array argument)', () => {
+				it('with an array argument', () => {
 					const customErrorMessage = 'the provided role does not exist in {ARGS[0]}, {ARGS[1]}';
 					let validate = new MongooseValidatorjs(schema);
 					validate.field('role').isIn(['admin', 'guest'], { message: customErrorMessage });
 					let model = new User({ role: 'invalidRole' });
-					let error = model.validateSync();
-					expect(error).to.not.be.undefined;
-					expect(error.errors).to.have.property('role');
-					expect(error.errors.role.message).to.equal('the provided role does not exist in admin, guest');
+					validateErrorMessage(model, 'role', 'the provided role does not exist in admin, guest');
 				});
 
-				it('isWhitelisted (with a string argument)', () => {
+				it('with a string argument', () => {
 					const customErrorMessage = 'the provided role does not exist in {ARGS[0]}';
 					let validate = new MongooseValidatorjs(schema);
 					validate.field('role').isWhitelisted('abcdefg', { message: customErrorMessage });
 					let model = new User({ role: 'hijklmn' });
-					let error = model.validateSync();
-					expect(error).to.not.be.undefined;
-					expect(error.errors).to.have.property('role');
-					expect(error.errors.role.message).to.equal('the provided role does not exist in abcdefg');
+					validateErrorMessage(model, 'role', 'the provided role does not exist in abcdefg');
 				});
 
-				it('isWhitelisted (with a false argument)', () => {
+				it('with a false argument', () => {
 					const customErrorMessage = 'the provided role does not exist in {ARGS[0]}';
 					let validate = new MongooseValidatorjs(schema);
 					validate.field('role').isWhitelisted(false, { message: customErrorMessage });
 					let model = new User({ role: 'myRole' });
-					let error = model.validateSync();
-					expect(error).to.not.be.undefined;
-					expect(error.errors).to.have.property('role');
-					expect(error.errors.role.message).to.equal('the provided role does not exist in ');
+					validateErrorMessage(model, 'role', 'the provided role does not exist in ');
 				});
 
-				it('isWhitelisted (with an undefined argument)', () => {
+				it('with an undefined argument', () => {
 					const customErrorMessage = 'the provided role does not exist in {ARGS[0]}';
 					let validate = new MongooseValidatorjs(schema);
 					let undefinedVariable;
 					validate.field('role').isWhitelisted(undefinedVariable, { message: customErrorMessage });
 					let model = new User({ role: 'myRole' });
-					let error = model.validateSync();
-					expect(error).to.not.be.undefined;
-					expect(error.errors).to.have.property('role');
-					expect(error.errors.role.message).to.equal('the provided role does not exist in ');
+					validateErrorMessage(model, 'role', 'the provided role does not exist in ');
 				});
 
-				it('isWhitelisted (with a null argument)', () => {
+				it('with a null argument', () => {
 					const customErrorMessage = 'the provided role does not exist in {ARGS[0]}';
 					let validate = new MongooseValidatorjs(schema);
 					validate.field('role').isWhitelisted(null, { message: customErrorMessage });
 					let model = new User({ role: 'myRole' });
-					let error = model.validateSync();
-					expect(error).to.not.be.undefined;
-					expect(error.errors).to.have.property('role');
-					expect(error.errors.role.message).to.equal('the provided role does not exist in ');
+					validateErrorMessage(model, 'role', 'the provided role does not exist in ');
 				});
 
-				it('isIn (with an object with an undefined argument)', () => {
+				it('with an object with an undefined argument', () => {
 					const customErrorMessage = 'Must be between {ARGS[0]} and {ARGS[1]} characters';
 					let validate = new MongooseValidatorjs(schema);
 					let undefinedVariable;
 					validate.field('role').isLength({ min: 10, max: undefinedVariable }, { message: customErrorMessage });
 					let model = new User({ role: 'short' });
-					let error = model.validateSync();
-					expect(error).to.not.be.undefined;
-					expect(error.errors).to.have.property('role');
-					expect(error.errors.role.message).to.equal('Must be between 10 and  characters');
+					validateErrorMessage(model, 'role', 'Must be between 10 and  characters');
 				});
 
 			});
