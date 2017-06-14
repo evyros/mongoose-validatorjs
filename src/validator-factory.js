@@ -9,16 +9,25 @@ export default class ValidatorFactory {
 
 				let options, message;
 				if(arg1 && arg1.message) {
-					// validator with custom message
+					/*
+					 Validator with a custom message.
+					 Example: .required({ message: 'invalid' })
+					 */
 					message = arg1.message;
 				}
 				else if(arg2 && arg2.message) {
-					// validator with argument & custom message
+					/*
+					 Validator with argument & custom message
+					 Example: .contains('seed', { message: 'no seed found' })
+					 */
 					options = arg1;
 					message = arg2.message;
 				}
 				else {
-					// validator with argument
+					/*
+					 Validator with argument
+					 Example: .isLength({ min: 0, max: 10 })
+					 */
 					options = arg1;
 				}
 				instance.addValidator(validator, options, message);

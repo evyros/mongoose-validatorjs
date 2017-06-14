@@ -49,6 +49,14 @@ describe('Mongoose Validator', () => {
 			expect(validate).to.be.an.instanceof(MongooseValidator);
 		});
 
+		it('provide bad schema object', () => {
+			let fn = () => {
+				const invalidSchema = {invalid: 'schema'};
+				new MongooseValidator(invalidSchema); // eslint-disable-line no-new
+			};
+			expect(fn).to.throw();
+		});
+
 		it('get schema', () => {
 			let validate = new MongooseValidator(schema);
 			expect(validate.getSchema()).to.equal(schema);

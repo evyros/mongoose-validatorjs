@@ -3,23 +3,47 @@ import defaultErrorMessages from './default-errors';
 
 export default class FieldValidator {
 
+	/**
+	 * @param schema
+	 * @param field
+	 */
 	constructor(schema, field) {
 		this._schema = schema;
 		this._field = field;
 	}
 
+	/**
+	 * Get mongoose schema for field
+	 * @returns {Schema}
+	 */
 	getSchema() {
 		return this._schema;
 	}
 
+	/**
+	 * Get field name
+	 * @returns String
+	 */
 	getField() {
 		return this._field;
 	}
 
+	/**
+	 * Create mongoose path for field
+	 * @returns {SchemaString}
+	 */
 	createPath() {
 		return this.getSchema().path(this.getField());
 	}
 
+	/**
+	 * Add a validator by name with argument and error message.
+	 * A validator can be a built-in / validator.js validator.
+	 * @param name
+	 * @param arg
+	 * @param message
+	 * @returns {*}
+	 */
 	addValidator(name, arg, message) {
 		if(name in this) {
 			return this[name](arg, message);
@@ -30,6 +54,12 @@ export default class FieldValidator {
 		throw new Error('Validator `' + name + '` does not exist');
 	}
 
+	/**
+	 * Add a validator.js's validator
+	 * @param name
+	 * @param args
+	 * @param message
+	 */
 	useValidatorJS(name, args, message) {
 		this.buildValidator({
 			validator: function(value){
@@ -42,6 +72,11 @@ export default class FieldValidator {
 		}, args);
 	}
 
+	/**
+	 * Set field as required
+	 * @param args
+	 * @param message
+	 */
 	required(args, message) {
 		this.buildValidator({
 			validator: function(value){
@@ -51,6 +86,11 @@ export default class FieldValidator {
 		});
 	}
 
+	/**
+	 * Add a custom validator.
+	 * @param fn
+	 * @param message
+	 */
 	custom(fn, message) {
 		this.buildValidator({
 			validator: fn,
@@ -58,6 +98,11 @@ export default class FieldValidator {
 		});
 	}
 
+	/**
+	 * Shorthand for creating any kind of validator
+	 * @param obj
+	 * @param args
+	 */
 	buildValidator(obj, args) {
 		this.createPath().validate({
 			isAsync: false,
@@ -68,6 +113,12 @@ export default class FieldValidator {
 
 }
 
+/**
+ * Interploate error message with arguments
+ * @param message
+ * @param args
+ * @returns {string}
+ */
 function interpolateMessage(message, args) {
 	if(args === null || typeof args === 'undefined') {
 		args = '';
@@ -84,6 +135,11 @@ function interpolateMessage(message, args) {
 	});
 }
 
+/**
+ * Check if a value is empty: zero-length string, null or undefined
+ * @param value
+ * @returns {boolean}
+ */
 function isEmpty(value) {
 	return value === '' || value === null || typeof value === 'undefined';
 }
