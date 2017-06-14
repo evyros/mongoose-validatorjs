@@ -11,11 +11,11 @@ Validators for Mongoose schemas using [validator.js](https://github.com/chriso/v
 ## Usage example
 ##### ES6
 ```javascript
-import MongooseValidatorjs from 'mongoose-validatorjs';
+import MongooseValidator from 'mongoose-validatorjs';
 ```
 ##### ES2015
 ```javascript
-var MongooseValidatorjs = require('mongoose-validatorjs');
+var MongooseValidator = require('mongoose-validatorjs');
 ```
 then...
 ```javascript
@@ -24,7 +24,7 @@ const UserSchema = new mongoose.Schema({
     username: { type: String, default: null }
 });
 
-const validate = new MongooseValidatorjs(UserSchema);
+const validate = new MongooseValidator(UserSchema);
 validate.field('email').required().isEmail();
 validate.field('username').isAlphanumeric();
 ```

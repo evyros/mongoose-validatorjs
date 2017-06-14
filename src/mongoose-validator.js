@@ -1,6 +1,6 @@
 import ValidatorFactory from './validator-factory';
 
-class MongooseValidatorjs {
+class MongooseValidator {
 
 	constructor(schema) {
 		this._schema = schema;
@@ -19,4 +19,4 @@ class MongooseValidatorjs {
 
 }
 
-export default MongooseValidatorjs;
+export default MongooseValidator;

@@ -2,10 +2,10 @@ import { expect } from 'chai';
 import mongoose from 'mongoose';
 mongoose.Promise = Promise;
 
-import MongooseValidatorjs from '../src/mongoose-validatorjs';
+import MongooseValidator from '../src/mongoose-validator';
 import defaultErrors from '../src/default-errors';
 
-describe('Mongoose Validator:', () => {
+describe('Mongoose Validator', () => {
 	let User, schema;
 
 	before(done => {
@@ -44,13 +44,13 @@ describe('Mongoose Validator:', () => {
 	describe('schema', () => {
 
 		it('new instance', () => {
-			let validate = new MongooseValidatorjs(schema);
+			let validate = new MongooseValidator(schema);
 			expect(validate).to.have.property('_schema');
-			expect(validate).to.be.an.instanceof(MongooseValidatorjs);
+			expect(validate).to.be.an.instanceof(MongooseValidator);
 		});
 
 		it('get schema', () => {
-			let validate = new MongooseValidatorjs(schema);
+			let validate = new MongooseValidator(schema);
 			expect(validate.getSchema()).to.equal(schema);
 		});
 
@@ -59,7 +59,7 @@ describe('Mongoose Validator:', () => {
 	describe('field', () => {
 
 		it('field', () => {
-			let validate = new MongooseValidatorjs(schema);
+			let validate = new MongooseValidator(schema);
 			expect(validate.field('email')).to.be.an('object');
 		});
 
@@ -68,7 +68,7 @@ describe('Mongoose Validator:', () => {
 	describe('required', () => {
 
 		beforeEach(() => {
-			let validate = new MongooseValidatorjs(schema);
+			let validate = new MongooseValidator(schema);
 			validate.field('email').required();
 		});
 
@@ -123,7 +123,7 @@ describe('Mongoose Validator:', () => {
 		let validate;
 
 		beforeEach(() => {
-			validate = new MongooseValidatorjs(schema);
+			validate = new MongooseValidator(schema);
 		});
 
 		describe('isLength', () => {
@@ -203,7 +203,7 @@ describe('Mongoose Validator:', () => {
 	describe('custom validator', () => {
 
 		it('should fail validation', () => {
-			let validate = new MongooseValidatorjs(schema);
+			let validate = new MongooseValidator(schema);
 			validate.field('email').custom(value => value.length > 0);
 			let model = new User({ email: '' });
 			let error = model.validateSync();
@@ -212,7 +212,7 @@ describe('Mongoose Validator:', () => {
 		});
 
 		it('should pass validation', () => {
-			let validate = new MongooseValidatorjs(schema);
+			let validate = new MongooseValidator(schema);
 			validate.field('email').custom(value => value.length === 0);
 			let model = new User({ email: '' });
 			let error = model.validateSync();
@@ -233,26 +233,26 @@ describe('Mongoose Validator:', () => {
 		describe('default message', () => {
 
 			it('required', () => {
-				let validate = new MongooseValidatorjs(schema);
+				let validate = new MongooseValidator(schema);
 				validate.field('email').required();
 				validateErrorMessage(new User(), 'email', 'email is required');
 			});
 
 			it('custom', () => {
-				let validate = new MongooseValidatorjs(schema);
+				let validate = new MongooseValidator(schema);
 				validate.field('email').custom(value => value.length > 0);
 				validateErrorMessage(new User(), 'email', 'email is invalid');
 			});
 
 			it('validator.js', () => {
-				let validate = new MongooseValidatorjs(schema);
+				let validate = new MongooseValidator(schema);
 				validate.field('email').isEmail();
 				let model = new User({ email: 'invalid.email$gmail.com' });
 				validateErrorMessage(model, 'email', defaultErrors.isEmail);
 			});
 
 			it('validator.js + message interpolation', () => {
-				let validate = new MongooseValidatorjs(schema);
+				let validate = new MongooseValidator(schema);
 				validate.field('email').isLength({ min: 10, max: 60 });
 				let model = new User({ email: 'too@short' });
 				validateErrorMessage(model, 'email', 'Must be between 10 and 60 characters');
@@ -265,14 +265,14 @@ describe('Mongoose Validator:', () => {
 			// built-in validator
 			it('required', () => {
 				const customErrorMessage = 'Cannot be blank';
-				let validate = new MongooseValidatorjs(schema);
+				let validate = new MongooseValidator(schema);
 				validate.field('email').required({ message: customErrorMessage });
 				validateErrorMessage(new User(), 'email', customErrorMessage);
 			});
 
 			it('custom', () => {
 				const customErrorMessage = 'email should have at lease one character';
-				let validate = new MongooseValidatorjs(schema);
+				let validate = new MongooseValidator(schema);
 				validate.field('email').custom(
 					value => value.length > 0,
 					{ message: customErrorMessage }
@@ -282,7 +282,7 @@ describe('Mongoose Validator:', () => {
 
 			it('validator.js without argument', () => {
 				const customErrorMessage = 'The email you entered is not valid';
-				let validate = new MongooseValidatorjs(schema);
+				let validate = new MongooseValidator(schema);
 				validate.field('email').isEmail({ message: customErrorMessage });
 				let model = new User({ email: 'invalid.email$gmail.com' });
 				validateErrorMessage(model, 'email', customErrorMessage);
@@ -290,7 +290,7 @@ describe('Mongoose Validator:', () => {
 
 			it('validator.js with 1 argument', () => {
 				const customErrorMessage = 'the role does not exist';
-				let validate = new MongooseValidatorjs(schema);
+				let validate = new MongooseValidator(schema);
 				validate.field('role').isIn(['admin', 'guest'], { message: customErrorMessage });
 				let model = new User({ role: 'invalidRole' });
 				validateErrorMessage(model, 'role', customErrorMessage);
@@ -300,7 +300,7 @@ describe('Mongoose Validator:', () => {
 
 				it('with an array argument', () => {
 					const customErrorMessage = 'the provided role does not exist in {ARGS[0]}, {ARGS[1]}';
-					let validate = new MongooseValidatorjs(schema);
+					let validate = new MongooseValidator(schema);
 					validate.field('role').isIn(['admin', 'guest'], { message: customErrorMessage });
 					let model = new User({ role: 'invalidRole' });
 					validateErrorMessage(model, 'role', 'the provided role does not exist in admin, guest');
@@ -308,7 +308,7 @@ describe('Mongoose Validator:', () => {
 
 				it('with a string argument', () => {
 					const customErrorMessage = 'the provided role does not exist in {ARGS[0]}';
-					let validate = new MongooseValidatorjs(schema);
+					let validate = new MongooseValidator(schema);
 					validate.field('role').isWhitelisted('abcdefg', { message: customErrorMessage });
 					let model = new User({ role: 'hijklmn' });
 					validateErrorMessage(model, 'role', 'the provided role does not exist in abcdefg');
@@ -316,7 +316,7 @@ describe('Mongoose Validator:', () => {
 
 				it('with a false argument', () => {
 					const customErrorMessage = 'the provided role does not exist in {ARGS[0]}';
-					let validate = new MongooseValidatorjs(schema);
+					let validate = new MongooseValidator(schema);
 					validate.field('role').isWhitelisted(false, { message: customErrorMessage });
 					let model = new User({ role: 'myRole' });
 					validateErrorMessage(model, 'role', 'the provided role does not exist in ');
@@ -324,7 +324,7 @@ describe('Mongoose Validator:', () => {
 
 				it('with an undefined argument', () => {
 					const customErrorMessage = 'the provided role does not exist in {ARGS[0]}';
-					let validate = new MongooseValidatorjs(schema);
+					let validate = new MongooseValidator(schema);
 					let undefinedVariable;
 					validate.field('role').isWhitelisted(undefinedVariable, { message: customErrorMessage });
 					let model = new User({ role: 'myRole' });
@@ -333,7 +333,7 @@ describe('Mongoose Validator:', () => {
 
 				it('with a null argument', () => {
 					const customErrorMessage = 'the provided role does not exist in {ARGS[0]}';
-					let validate = new MongooseValidatorjs(schema);
+					let validate = new MongooseValidator(schema);
 					validate.field('role').isWhitelisted(null, { message: customErrorMessage });
 					let model = new User({ role: 'myRole' });
 					validateErrorMessage(model, 'role', 'the provided role does not exist in ');
@@ -341,7 +341,7 @@ describe('Mongoose Validator:', () => {
 
 				it('with an object with an undefined argument', () => {
 					const customErrorMessage = 'Must be between {ARGS[0]} and {ARGS[1]} characters';
-					let validate = new MongooseValidatorjs(schema);
+					let validate = new MongooseValidator(schema);
 					let undefinedVariable;
 					validate.field('role').isLength({ min: 10, max: undefinedVariable }, { message: customErrorMessage });
 					let model = new User({ role: 'short' });

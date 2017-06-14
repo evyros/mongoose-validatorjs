@@ -2,7 +2,7 @@
   "name": "mongoose-validatorjs",
   "version": "0.5.0",
   "description": "Validators for Mongoose using validator.js",
-  "main": "dist/mongoose-validatorjs",
+  "main": "dist/mongoose-validator",
   "scripts": {
     "watch": "nodemon src/mongoose-validatorjs.js -L --exec babel-node",
     "build": "babel src --out-dir dist",
