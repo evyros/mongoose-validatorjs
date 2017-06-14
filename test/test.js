@@ -263,7 +263,7 @@ describe('Mongoose Validator', () => {
 				validateErrorMessage(new User(), 'email', customErrorMessage);
 			});
 
-			it('custom', () => {
+			it('custom validator', () => {
 				const customErrorMessage = 'email should have at lease one character';
 				let validate = new MongooseValidator(schema);
 				validate.field('email').custom(
