@@ -223,13 +223,6 @@ describe('Mongoose Validator', () => {
 
 	describe('error messages', () => {
 
-		function validateErrorMessage(model, field, messageAfter) {
-			let error = model.validateSync();
-			expect(error).to.not.be.undefined;
-			expect(error.errors).to.have.property(field);
-			expect(error.errors[field].message).to.equal(messageAfter);
-		}
-
 		describe('default message', () => {
 
 			it('required', () => {
@@ -353,5 +346,69 @@ describe('Mongoose Validator', () => {
 		});
 
 	});
+
+	describe('multiple validators chaining', () => {
+
+		it('built-in validators', () => {
+			let validate = new MongooseValidator(schema);
+			validate.field('email')
+				.required()
+				.custom(value => value.length < 5);
+
+			let model = new User({ email: 'long@email.com' });
+			validateErrorMessage(model, 'email', 'email is invalid');
+
+			let model2 = new User();
+			validateErrorMessage(model2, 'email', 'email is required');
+		});
+
+		it('validator.js validators', () => {
+			let validate = new MongooseValidator(schema);
+			validate.field('email')
+				.isEmail()
+				.contains('name')
+				.isLength({ min: 5, max: 10 });
+
+			let model = new User({ email: 'invalidEmail' });
+			validateErrorMessage(model, 'email', 'Invalid email');
+
+			let model2 = new User({ email: 'valid@email.com' });
+			validateErrorMessage(model2, 'email', 'Invalid characters');
+
+			let model3 = new User({ email: 'name.too.long@email.com' });
+			validateErrorMessage(model3, 'email', 'Must be between 5 and 10 characters');
+		});
+
+		it('mixed', () => {
+			let validate = new MongooseValidator(schema);
+			validate.field('email')
+				.required()
+				.isEmail()
+				.contains('name');
+
+			let model = new User();
+			validateErrorMessage(model, 'email', 'email is required');
+
+			let model2 = new User({ email: 'invalidEmail' });
+			validateErrorMessage(model2, 'email', 'Invalid email');
+
+			let model3 = new User({ email: 'valid@email.com' });
+			validateErrorMessage(model3, 'email', 'Invalid characters');
+		});
+
+	});
+
+	/**
+	 * Util to validate an expected message
+	 * @param model
+	 * @param field
+	 * @param expectedMessage
+	 */
+	function validateErrorMessage(model, field, expectedMessage) {
+		let error = model.validateSync();
+		expect(error).to.not.be.undefined;
+		expect(error.errors).to.have.property(field);
+		expect(error.errors[field].message).to.equal(expectedMessage);
+	}
 
 });
