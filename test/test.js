@@ -17,7 +17,9 @@ describe('Mongoose Validator', () => {
 		const age = { type: Number, default: null };
 		const date_created = { type: Date, default: date };
 
-		mongoose.connect(url);
+		mongoose.connect(url, {
+			useMongoClient: true
+		});
 
 		schema = new mongoose.Schema({ email, role, age, date_created });
 		User = mongoose.model('User', schema);
