@@ -127,7 +127,7 @@ function interpolateMessage(message, args) {
 		args = [args];
 	}
 	else if(typeof args === 'object') {
-		args = Object.values(args);
+		args = Object.keys(args).map(key => args[key]);
 	}
 	return message.replace(/{ARGS\[(\d+)\]}/g, (replace, argIndex) => {
 		let val = args[argIndex];
