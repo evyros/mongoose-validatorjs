@@ -155,6 +155,25 @@ describe('Mongoose Validator', () => {
 
 		});
 
+		describe('isURL', () => {
+
+			it('should raise no errors', () => {
+				validate.field('email').isURL();
+				let model = new User({ email: 'http://www.google.com' });
+				let error = model.validateSync();
+				expect(error).to.be.undefined;
+			});
+
+			it('should raise an error', () => {
+				validate.field('email').isURL({protocols: ['http']});
+				let model = new User({ email: 'https://www.google.com' });
+				let error = model.validateSync();
+				expect(error).to.not.be.undefined;
+				expect(error.errors).to.have.property('email');
+			});
+
+		});
+
 		describe('isEmail', () => {
 
 			beforeEach(() => {
@@ -326,7 +345,7 @@ describe('Mongoose Validator', () => {
 				});
 
 				it('with an undefined argument', () => {
-					const customErrorMessage = 'the provided role does not exist in {ARGS[0]}';
+					const customErrorMessage = 'the provided role does not exist in ';
 					let validate = new MongooseValidator(schema);
 					let undefinedVariable;
 					validate.field('role').isWhitelisted(undefinedVariable, { message: customErrorMessage });
@@ -339,7 +358,7 @@ describe('Mongoose Validator', () => {
 					let validate = new MongooseValidator(schema);
 					validate.field('role').isWhitelisted(null, { message: customErrorMessage });
 					let model = new User({ role: 'myRole' });
-					validateErrorMessage(model, 'role', 'the provided role does not exist in ');
+					validateErrorMessage(model, 'role', 'the provided role does not exist in {ARGS[0]}');
 				});
 
 				it('with an object with an undefined argument', () => {
