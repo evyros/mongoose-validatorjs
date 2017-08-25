@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/evyros/mongoose-validatorjs#readme",
   "dependencies": {
-    "validator": "^7.0.0"
+    "validator": "^8.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
