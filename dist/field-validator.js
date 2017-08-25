@@ -135,7 +135,7 @@ exports.default = FieldValidator; /**
 
 function interpolateMessage(message, args) {
 	if (args === null || typeof args === 'undefined') {
-		args = '';
+		return message;
 	}
 	if (typeof args === 'string') {
 		args = [args];

@@ -8,7 +8,7 @@ exports.default = {
 	contains: 'Invalid characters',
 	matches: 'Does not match',
 	isEmail: 'Invalid email',
-	isUrl: 'Invalid URL',
+	isURL: 'Invalid URL',
 	isFQDN: 'Invalid FQDN',
 	isIP: 'Invalid IP',
 	isAlpha: 'Invalid characters',
